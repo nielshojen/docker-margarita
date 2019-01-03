@@ -20,6 +20,19 @@ EOF
 
 fi
 
+if [[ $ADMIN_USER ]] && [[ $ADMIN_PASS ]]; then
+/usr/bin/htpasswd -b -c /margarita/.htpasswd ${ADMIN_USER} ${ADMIN_PASS}
+/bin/cat <<EOF > /extras.conf
+## Basic Authentication
+ <Location />
+   AuthType Basic
+   AuthName "Authentication Required"
+   AuthUserFile "/margarita/.htpasswd"
+   Require valid-user
+ </Location>
+EOF
+fi
+
 : "${APACHE_CONFDIR:=/etc/apache2}"
 : "${APACHE_ENVVARS:=$APACHE_CONFDIR/envvars}"
 if test -f "$APACHE_ENVVARS"; then
