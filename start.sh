@@ -1,8 +1,36 @@
 #!/bin/bash
 set -e
 
-if [ -f /reposado/code/preferences.plist ]; then
-  /bin/cp /reposado/code/preferences.plist /margarita/preferences.plis
+if [[ $LOCAL_URL ]]; then
+
+/bin/cat <<EOF > /margarita/preferences.plist
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>LocalCatalogURLBase</key>
+  <string>${LOCAL_URL}</string>
+  <key>UpdatesMetadataDir</key>
+  <string>/reposado/metadata</string>
+  <key>UpdatesRootDir</key>
+  <string>/reposado/html</string>
+</dict>
+</plist>
+EOF
+
+fi
+
+if [[ $ADMIN_USER ]] && [[ $ADMIN_PASS ]]; then
+/usr/bin/htpasswd -b -c /margarita/.htpasswd ${ADMIN_USER} ${ADMIN_PASS}
+/bin/cat <<EOF > /extras.conf
+## Basic Authentication
+ <Location />
+   AuthType Basic
+   AuthName "Authentication Required"
+   AuthUserFile "/margarita/.htpasswd"
+   Require valid-user
+ </Location>
+EOF
 fi
 
 : "${APACHE_CONFDIR:=/etc/apache2}"
