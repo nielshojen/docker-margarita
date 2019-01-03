@@ -29,8 +29,8 @@ COPY margarita.wsgi /
 COPY preferences.plist /margarita/
 COPY start.sh /
 
-RUN chown -R www-data:www-data /margarita /reposado /start.sh \
-  && chmod -R ug+rws /margarita /reposado \
+RUN chown -R www-data:www-data /margarita /start.sh \
+  && chmod -R ug+rws /margarita \
   && chmod g+x /start.sh
 
 CMD ["/start.sh"]
