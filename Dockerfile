@@ -1,9 +1,10 @@
 FROM python:2.7-slim
 
+EXPOSE 80
 EXPOSE 8089
 
 RUN apt-get update -qq
-RUN apt-get install -y -qq apache2 apache2-utils curl libapache2-mod-wsgi
+RUN apt-get install -y -qq apache2 apache2-utils curl libapache2-mod-wsgi wget apt-utils
 RUN pip install -q flask
 RUN mkdir -p /margarita /reposado/html /reposado/metadata
 RUN mkdir -p /var/lock/apache2 /var/run/apache2
