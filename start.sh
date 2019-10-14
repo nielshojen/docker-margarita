@@ -1,6 +1,15 @@
 #!/bin/bash
 set -e
 
+if [[ -f "/etc/oauth2_proxy.cfg" ]]; then
+    /bin/echo "Found oauth2 proxy config file ..."
+    /bin/echo "Starting oauth2_proxy ..."
+    /usr/local/bin/oauth2_proxy --upstream=http://0.0.0.0:8089 &
+elif [[ ${OAUTH2_PROXY_COOKIE_SECRET} ]] && [[ ${OAUTH2_PROXY_EMAIL_DOMAINS} ]] && [[ ${OAUTH2_PROXY_CLIENT_SECRET} ]]; then
+    /bin/echo "Starting oauth2_proxy with settings from env ..."
+    /usr/local/bin/oauth2_proxy --upstream=http://0.0.0.0:8089 &
+fi
+
 if [[ $LOCAL_URL ]]; then
 
 /bin/cat <<EOF > /margarita/preferences.plist
@@ -44,12 +53,3 @@ fi
 rm -f "$APACHE_PID_FILE"
 
 exec apache2 -DFOREGROUND "$@"
-
-if [[ -f "/etc/oauth2_proxy.cfg" ]]; then
-    /bin/echo "Found oauth2 proxy config file ..."
-    /bin/echo "Starting oauth2_proxy ..."
-    /usr/local/bin/oauth2_proxy --upstream=http://0.0.0.0:8089
-elif [[ ${OAUTH2_PROXY_COOKIE_SECRET} ]] && [[ ${OAUTH2_PROXY_EMAIL_DOMAINS} ]] && [[ ${OAUTH2_PROXY_CLIENT_SECRET} ]]; then
-    /bin/echo "Starting oauth2_proxy with settings from env ..."
-    /usr/local/bin/oauth2_proxy --upstream=http://0.0.0.0:8089
-fi
