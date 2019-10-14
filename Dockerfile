@@ -1,6 +1,6 @@
 FROM python:2.7-slim
 
-EXPOSE 80
+EXPOSE 8080
 EXPOSE 8089
 
 RUN apt-get update -qq
